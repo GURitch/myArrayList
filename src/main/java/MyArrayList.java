@@ -177,7 +177,7 @@ public class MyArrayList<T> {
      * @throws ArrayIndexOutOfBoundsException если индекс выходит за размер списка
      */
     private boolean indexCheck(int index) {
-        if (index >= size) {
+        if (index >= size || index < 0) {
             throw new ArrayIndexOutOfBoundsException();
         }
         return true;
