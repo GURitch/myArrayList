@@ -2,8 +2,9 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.Comparator;
+
+import static org.junit.Assert.*;
 
 /**
  * Класс для тестирования MyArrayList.
@@ -101,5 +102,42 @@ public class MyArrayListTest {
         list.add(s1);
         list.add(s2);
         assertEquals(list.size(), 2);
+    }
+
+    @Test
+    public void testSortComparator() {
+        String a = "aaa", b = "bb", c = "c";
+        list.add(b);
+        list.add(c);
+        list.add(a);
+        list.sort(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.length() > o2.length() ? 1 : o1.length() == o2.length() ? 0 : -1;
+            }
+        });
+        assertEquals(c, list.get(0));
+        assertEquals(b, list.get(1));
+        assertEquals(a, list.get(2));
+    }
+
+    @Test
+    public void testSortComparable() {
+        String a = "aaa", b = "bb", c = "c";
+        list.add(b);
+        list.add(c);
+        list.add(a);
+        list.sort();
+        assertEquals(a, list.get(0));
+        assertEquals(b, list.get(1));
+        assertEquals(c, list.get(2));
+    }
+
+    @Test
+    public void testSortComparableException() {
+        MyArrayList<Person> personMyArrayList = new MyArrayList<>();
+        personMyArrayList.add(new Person("Bob", 30));
+        personMyArrayList.add(new Person("John", 40));
+        assertThrows(UnsupportedOperationException.class, personMyArrayList::sort);
     }
 }
