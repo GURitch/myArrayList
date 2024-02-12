@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Objects;
  * @param <T> тип элементов, хранящихся в списке
  */
 public class MyArrayList<T> {
-    private Object[] array;
+    private T[] array;
     private final int startCapacity = 5;
     private int size;
 
@@ -18,7 +19,7 @@ public class MyArrayList<T> {
      * Конструктор без параметров создает массив с начальной емкостью по умолчанию.
      */
     public MyArrayList() {
-        array = new Object[startCapacity];
+        array = (T[]) new Object[startCapacity];
     }
 
     /**
@@ -29,7 +30,7 @@ public class MyArrayList<T> {
      */
     public MyArrayList(int capacity) {
         if (capacity >= 0) {
-            array = new Object[capacity];
+            array = (T[]) new Object[capacity];
         } else {
             throw new IllegalArgumentException();
         }
@@ -38,12 +39,14 @@ public class MyArrayList<T> {
     /**
      * Конструктор создает массив из переданной коллекции.
      *
-     * @param collections коллекция, из которой будут скопированы элементы
+     * @param collection коллекция, из которой будут скопированы элементы
+     * @throws IllegalArgumentException если передана коллекция с элементами неподходящего типа
      */
-    public MyArrayList(Collection collections) {
-        array = collections.toArray();
+    public MyArrayList(Collection<? extends T> collection) {
+        array = (T[]) collection.toArray();
         size = array.length;
     }
+
 
     /**
      * Добавляет элемент в конец списка.
@@ -156,7 +159,7 @@ public class MyArrayList<T> {
      * Очищает список.
      */
     public void clear(){
-        array = new Object[startCapacity];
+        array = (T[]) new Object[startCapacity];
         size = 0;
     }
 
@@ -167,6 +170,110 @@ public class MyArrayList<T> {
      */
     public int size() {
         return size;
+    }
+
+    /**
+     * Сортирует элементы списка с использованием интерфейса Comparable.
+     */
+    public void sort() {
+        quickSort(0, size - 1);
+    }
+
+    /**
+     * Сортирует элементы списка с использованием заданного компаратора.
+     *
+     * @param comparator компаратор для сравнения элементов
+     */
+    public void sort(Comparator<? super T> comparator) {
+        quickSort(0, size - 1, comparator);
+    }
+
+    /**
+     * Рекурсивно сортирует элементы списка с использованием алгоритма быстрой сортировки и интерфейса Comparable.
+     *
+     * @param low  индекс начала подсписка
+     * @param high индекс конца подсписка
+     */
+    private void quickSort(int low, int high) {
+        if (low < high) {
+            int pi = partition(low, high);
+
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
+        }
+    }
+
+    /**
+     * Рекурсивно сортирует элементы списка с использованием алгоритма быстрой сортировки и заданного компаратора.
+     *
+     * @param low        индекс начала подсписка
+     * @param high       индекс конца подсписка
+     * @param comparator компаратор для сравнения элементов
+     */
+    private void quickSort(int low, int high, Comparator<? super T> comparator) {
+        if (low < high) {
+            int pi = partition(low, high, comparator);
+
+            quickSort(low, pi - 1, comparator);
+            quickSort(pi + 1, high, comparator);
+        }
+    }
+
+    /**
+     * Метод разделения списка на две части относительно опорного элемента с использованием интерфейса Comparable.
+     *
+     * @param low  индекс начала подсписка
+     * @param high индекс конца подсписка
+     * @return индекс опорного элемента после разделения
+     */
+    private int partition(int low, int high) {
+        if (!(array[low] instanceof Comparable)) {
+            throw new UnsupportedOperationException("Элементы списка не поддерживают сравнение через интерфейс Comparable.");
+        }
+
+        T pivot = array[high];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (((Comparable<T>) array[j]).compareTo(pivot) < 0) {
+                i++;
+                swap(i, j);
+            }
+        }
+        swap(i + 1, high);
+        return i + 1;
+    }
+
+    /**
+     * Метод разделения списка на две части относительно опорного элемента с использованием заданного компаратора.
+     *
+     * @param low        индекс начала подсписка
+     * @param high       индекс конца подсписка
+     * @param comparator компаратор для сравнения элементов
+     * @return индекс опорного элемента после разделения
+     */
+    private int partition(int low, int high, Comparator<? super T> comparator) {
+        T pivot = array[high];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (comparator.compare(array[j], pivot) < 0) {
+                i++;
+                swap(i, j);
+            }
+        }
+        swap(i + 1, high);
+        return i + 1;
+    }
+
+    /**
+     * Меняет местами два элемента в списке.
+     *
+     * @param i индекс первого элемента для обмена
+     * @param j индекс второго элемента для обмена
+     */
+    private void swap(int i, int j) {
+        T temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 
     /**
@@ -191,6 +298,7 @@ public class MyArrayList<T> {
             array = Arrays.copyOf(array, (int) (array.length * 1.5));
         }
     }
+
 
     @Override
     public boolean equals(Object o) {
