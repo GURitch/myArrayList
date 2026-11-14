@@ -75,6 +75,6 @@ public class Main {
         });
         System.out.println(numbersList);
 
-        personList.sort();
+        numbersList.sort();
     }
 }
