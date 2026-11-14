@@ -1,4 +1,4 @@
-# Проект MyArrayList
+# Проект simpleArrayList
 
 Проект MyArrayList представляет собой простую реализацию динамического массива в языке Java.
 
@@ -18,7 +18,7 @@ MyArrayList обеспечивает основные операции доба�
 ## Использование
 
 Склонируйте репозиторий:
-git clone https://github.com/GURitch/myArrayList.git
+git clone https://github.com/GURitch/simpleArrayList.git
 
 Импортируйте проект в вашу среду разработки Java (например, IntelliJ IDEA, Eclipse и т.д.).
 
